@@ -15,7 +15,7 @@ public partial class Account
 
     public string DateOfBirthday { get; set; } = null!;
 
-    public int Role { get; set; }
+    public short Role { get; set; }
 
     public int? IdImage { get; set; }
 
