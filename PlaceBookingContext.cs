@@ -202,7 +202,7 @@ public partial class PlaceBookingContext : DbContext
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id_place");
             entity.Property(e => e.IdHall).HasColumnName("id_hall");
-            entity.Property(e => e.Place1).HasColumnName("place");
+            entity.Property(e => e.SeatNumber).HasColumnName("seat_number");
             entity.Property(e => e.Row).HasColumnName("row");
 
             entity.HasOne(d => d.IdHallNavigation).WithMany(p => p.Places)

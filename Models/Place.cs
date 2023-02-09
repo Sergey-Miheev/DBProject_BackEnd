@@ -11,7 +11,7 @@ public partial class Place
 
     public short Row { get; set; }
 
-    public short Place1 { get; set; }
+    public short SeatNumber { get; set; }
 
     public virtual ICollection<Booking> Bookings { get; } = new List<Booking>();
 
