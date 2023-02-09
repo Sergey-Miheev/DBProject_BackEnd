@@ -1,5 +1,6 @@
 using API.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
 
@@ -7,7 +8,7 @@ namespace API
 {
     class Program
     {
-        static public async void Main(string[] args)
+        static public void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -19,11 +20,7 @@ namespace API
 
             app.MapGet("/accounts", async (PlaceBookingContext db) =>
             await db.Accounts.ToListAsync());
-            /*
-            app.MapGet("/account/{IdAccount}", async (int idAccount, PlaceBookingContext db) =>
-                await db.Accounts.FindAsync(idAccount)
-                    is Account account ? Results.Ok(account) : Results.NotFound());
-            */
+
             app.MapGet("/account/{Email}", async (string Email, PlaceBookingContext db) =>
                 await db.Accounts.FirstOrDefaultAsync(acc => acc.Email == Email)
                     is Account account ? Results.Ok(account) : Results.NotFound());
@@ -205,8 +202,8 @@ namespace API
             {
                 return await db.Places.Where(place => place.IdHall == idHall).ToListAsync();
             });
-
-            app.MapGet("/placeExistenceCheck", async (Place inputPlace, PlaceBookingContext db) =>
+           
+            app.MapPost("/placeExistenceCheck", async ([FromBody] Place inputPlace, PlaceBookingContext db) =>
                 await db.Places.FirstOrDefaultAsync(place => place.IdHall == inputPlace.IdHall && place.Row == inputPlace.Row && place.SeatNumber == inputPlace.SeatNumber)
                     is Place truePlace ? Results.Ok(truePlace) : Results.NotFound());
 
