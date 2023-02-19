@@ -244,7 +244,7 @@ public partial class PlaceBookingContext : DbContext
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id_session");
             entity.Property(e => e.DateTime)
-                .HasColumnType("time with time zone")
+                .HasColumnType("timestamp with time zone")
                 .HasColumnName("date_time");
             entity.Property(e => e.IdFilm).HasColumnName("id_film");
             entity.Property(e => e.IdHall).HasColumnName("id_hall");
