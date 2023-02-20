@@ -207,8 +207,8 @@ namespace API
                 return await db.Places.Where(place => place.IdHall == idHall).ToListAsync();
             });
            
-            app.MapPost("/placeExistenceCheck", async ([FromBody] Place inputPlace, PlaceBookingContext db) =>
-                await db.Places.FirstOrDefaultAsync(place => place.IdHall == inputPlace.IdHall && place.Row == inputPlace.Row && place.SeatNumber == inputPlace.SeatNumber)
+            app.MapGet("/placeExistenceCheck/{idHall}/{row}/{seatNumber}", async (int idHall, int row, int seatNumber, PlaceBookingContext db) =>
+                await db.Places.FirstOrDefaultAsync(place => place.IdHall == idHall && place.Row == row && place.SeatNumber == seatNumber)
                     is Place truePlace ? Results.Ok(truePlace) : Results.NotFound());
 
             app.MapPost("/place", async (Place inputPlace, PlaceBookingContext db) =>
@@ -402,8 +402,6 @@ namespace API
                               }).ToListAsync();
             });
 
-            /*return await db.Sessions.Where(session => session.IdFilm == idFilm).ToListAsync();*/
-
             app.MapPost("/session", async (Session inputSession, PlaceBookingContext db) =>
             {
                 Session newSession = new();
@@ -453,6 +451,24 @@ namespace API
                               where hall.IdCinema == idCinema
                               select film).ToListAsync();
             });
+
+            ////////////// Get rows and seat numbers
+
+            app.MapGet("/rows/{idHall}", async (int idHall, PlaceBookingContext db) =>
+            {
+                return await (from place in db.Places 
+                              where place.IdHall == idHall 
+                              select place.Row ).Distinct().ToListAsync();
+            }
+            );
+
+            app.MapGet("/seatNums/{idHall}/{rowNum}", async (int idHall, int rowNum, PlaceBookingContext db) =>
+            {
+                return await (from place in db.Places 
+                              where place.IdHall == idHall && place.Row == rowNum
+                              select place.SeatNumber ).ToListAsync();
+            }
+            );
 
             app.Run();
         }
