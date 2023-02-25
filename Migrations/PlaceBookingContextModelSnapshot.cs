@@ -31,9 +31,8 @@ namespace placeBookingAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("IdAccount"));
 
-                    b.Property<string>("DateOfBirthday")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<DateOnly>("DateOfBirthday")
+                        .HasColumnType("date")
                         .HasColumnName("date_of_birthday");
 
                     b.Property<string>("Email")
@@ -106,13 +105,14 @@ namespace placeBookingAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("IdBooking"));
 
-                    b.Property<int>("BookingCode")
-                        .HasColumnType("integer")
+                    b.Property<string>("BookingCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
                         .HasColumnName("booking_code");
 
-                    b.Property<string>("DateTime")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("date_time");
 
                     b.Property<int>("IdAccount")
@@ -345,8 +345,8 @@ namespace placeBookingAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("IdSession"));
 
-                    b.Property<DateTimeOffset>("DateTime")
-                        .HasColumnType("time with time zone")
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("date_time");
 
                     b.Property<int>("IdFilm")

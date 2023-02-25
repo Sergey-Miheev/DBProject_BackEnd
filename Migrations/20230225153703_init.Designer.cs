@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace placeBookingAPI.Migrations
 {
     [DbContext(typeof(PlaceBookingContext))]
-    [Migration("20230114123710_changePasswordLength")]
-    partial class changePasswordLength
+    [Migration("20230225153703_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,9 +34,8 @@ namespace placeBookingAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("IdAccount"));
 
-                    b.Property<string>("DateOfBirthday")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<DateOnly>("DateOfBirthday")
+                        .HasColumnType("date")
                         .HasColumnName("date_of_birthday");
 
                     b.Property<string>("Email")
@@ -61,8 +60,8 @@ namespace placeBookingAPI.Migrations
                         .HasColumnType("character varying(70)")
                         .HasColumnName("password");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("integer")
+                    b.Property<short>("Role")
+                        .HasColumnType("smallint")
                         .HasColumnName("role");
 
                     b.HasKey("IdAccount")
@@ -109,13 +108,14 @@ namespace placeBookingAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("IdBooking"));
 
-                    b.Property<int>("BookingCode")
-                        .HasColumnType("integer")
+                    b.Property<string>("BookingCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
                         .HasColumnName("booking_code");
 
-                    b.Property<string>("DateTime")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("date_time");
 
                     b.Property<int>("IdAccount")
@@ -290,13 +290,13 @@ namespace placeBookingAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("id_hall");
 
-                    b.Property<short>("Place1")
-                        .HasColumnType("smallint")
-                        .HasColumnName("place");
-
                     b.Property<short>("Row")
                         .HasColumnType("smallint")
                         .HasColumnName("row");
+
+                    b.Property<short>("SeatNumber")
+                        .HasColumnType("smallint")
+                        .HasColumnName("seat_number");
 
                     b.HasKey("IdPlace")
                         .HasName("place_pkey");
@@ -348,8 +348,8 @@ namespace placeBookingAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("IdSession"));
 
-                    b.Property<DateTimeOffset>("DateTime")
-                        .HasColumnType("time with time zone")
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("date_time");
 
                     b.Property<int>("IdFilm")

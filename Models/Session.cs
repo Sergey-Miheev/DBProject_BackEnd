@@ -11,7 +11,7 @@ public partial class Session
 
     public int IdFilm { get; set; }
 
-    public DateTimeOffset DateTime { get; set; }
+    public DateTime DateTime { get; set; }
 
     public virtual ICollection<Booking> Bookings { get; } = new List<Booking>();
 

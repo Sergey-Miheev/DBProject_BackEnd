@@ -37,7 +37,7 @@ public partial class PlaceBookingContext : DbContext
     public virtual DbSet<Session> Sessions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=sessionPlace;Username=postgres;Password=1379");
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=placeBooking;Username=postgres;Password=1379");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -98,8 +98,11 @@ public partial class PlaceBookingContext : DbContext
             entity.Property(e => e.IdBooking)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id_booking");
-            entity.Property(e => e.BookingCode).HasColumnName("booking_code");
-            entity.Property(e => e.DateTime).HasColumnName("date_time");
+            entity.Property(e => e.BookingCode).HasColumnName("booking_code")
+                .HasMaxLength(30);
+                
+            entity.Property(e => e.DateTime).HasColumnName("date_time")
+                .HasColumnType("timestamp without time zone"); 
             entity.Property(e => e.IdAccount).HasColumnName("id_account");
             entity.Property(e => e.IdPlace).HasColumnName("id_place");
             entity.Property(e => e.IdSession).HasColumnName("id_session");
@@ -244,7 +247,7 @@ public partial class PlaceBookingContext : DbContext
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id_session");
             entity.Property(e => e.DateTime)
-                .HasColumnType("timestamp with time zone")
+                .HasColumnType("timestamp without time zone")
                 .HasColumnName("date_time");
             entity.Property(e => e.IdFilm).HasColumnName("id_film");
             entity.Property(e => e.IdHall).HasColumnName("id_hall");

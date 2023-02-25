@@ -13,7 +13,7 @@ public partial class Account
 
     public string Password { get; set; } = null!;
 
-    public string DateOfBirthday { get; set; } = null!;
+    public DateOnly DateOfBirthday { get; set; }
 
     public short Role { get; set; }
 

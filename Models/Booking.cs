@@ -13,9 +13,9 @@ public partial class Booking
 
     public int IdAccount { get; set; }
 
-    public int BookingCode { get; set; }
+    public string BookingCode { get; set; } = null!;
 
-    public string DateTime { get; set; } = null!;
+    public DateTime DateTime { get; set; }
 
     public virtual Account IdAccountNavigation { get; set; } = null!;
 

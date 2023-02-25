@@ -89,8 +89,9 @@ namespace placeBookingAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     email = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: false),
-                    password = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    dateofbirthday = table.Column<string>(name: "date_of_birthday", type: "text", nullable: false),
+                    password = table.Column<string>(type: "character varying(70)", maxLength: 70, nullable: false),
+                    dateofbirthday = table.Column<DateOnly>(name: "date_of_birthday", type: "date", nullable: false),
+                    role = table.Column<short>(type: "smallint", nullable: false),
                     idimage = table.Column<int>(name: "id_image", type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -132,7 +133,7 @@ namespace placeBookingAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     idhall = table.Column<int>(name: "id_hall", type: "integer", nullable: false),
                     row = table.Column<short>(type: "smallint", nullable: false),
-                    place = table.Column<short>(type: "smallint", nullable: false)
+                    seatnumber = table.Column<short>(name: "seat_number", type: "smallint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -153,7 +154,7 @@ namespace placeBookingAPI.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     idhall = table.Column<int>(name: "id_hall", type: "integer", nullable: false),
                     idfilm = table.Column<int>(name: "id_film", type: "integer", nullable: false),
-                    datetime = table.Column<DateTimeOffset>(name: "date_time", type: "time with time zone", nullable: false)
+                    datetime = table.Column<DateTime>(name: "date_time", type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -208,8 +209,8 @@ namespace placeBookingAPI.Migrations
                     idsession = table.Column<int>(name: "id_session", type: "integer", nullable: false),
                     idplace = table.Column<int>(name: "id_place", type: "integer", nullable: false),
                     idaccount = table.Column<int>(name: "id_account", type: "integer", nullable: false),
-                    bookingcode = table.Column<int>(name: "booking_code", type: "integer", nullable: false),
-                    datetime = table.Column<string>(name: "date_time", type: "text", nullable: false)
+                    bookingcode = table.Column<string>(name: "booking_code", type: "character varying(30)", maxLength: 30, nullable: false),
+                    datetime = table.Column<DateTime>(name: "date_time", type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
