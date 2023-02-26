@@ -523,6 +523,16 @@ namespace API
                 return Results.NotFound();
             });
 
+            ////////////// Get id of reserved seats
+
+            app.MapGet("/reservedSeats/{idSession}/{idHall}", async (int idSession, int idHall, PlaceBookingContext db) =>
+            {
+                return await (from booking in db.Bookings
+                              join place in db.Places on booking.IdPlace equals place.IdPlace                            
+                              where place.IdHall == idHall && booking.IdSession == idSession
+                              select booking.IdPlace).ToListAsync();
+            });
+
             app.Run();
         }
     }
