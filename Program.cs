@@ -1,8 +1,5 @@
 using API.Models;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Xml.Linq;
 
 namespace API
@@ -78,9 +75,10 @@ namespace API
             app.MapGet("/images", async (PlaceBookingContext db) =>
             await db.Images.ToListAsync());
 
-            app.MapGet("/image/{idImage}", async (int idImage, PlaceBookingContext db) =>
-            await db.Images.FindAsync(idImage)
-                    is Image image ? Results.Ok(image) : Results.NotFound());
+            app.MapGet("/image/{idImage}", async (int idImage, PlaceBookingContext db) =>         
+                await db.Images.FindAsync(idImage)
+                is Image image ? Results.Ok(image.Url) : Results.NotFound()
+            );
 
             app.MapPost("/image", async (Image inputImage, PlaceBookingContext db) =>
             {
@@ -206,7 +204,7 @@ namespace API
             {
                 return await db.Places.Where(place => place.IdHall == idHall).ToListAsync();
             });
-            
+
             app.MapGet("/placeExistenceCheck/{idHall}/{row}/{seatNumber}", async (int idHall, int row, int seatNumber, PlaceBookingContext db) =>
                 await db.Places.FirstOrDefaultAsync(place => place.IdHall == idHall && place.Row == row && place.SeatNumber == seatNumber)
                     is Place truePlace ? Results.Ok(truePlace) : Results.NotFound());
@@ -232,11 +230,11 @@ namespace API
                 {
                     return Results.NotFound();
                 }
-                
+
                 editPlace.IdHall = inputPlace.IdHall;
                 editPlace.Row = inputPlace.Row;
                 editPlace.SeatNumber = inputPlace.SeatNumber;
-                
+
                 await db.SaveChangesAsync();
                 return Results.Ok(editPlace);
             });
@@ -256,6 +254,10 @@ namespace API
 
             app.MapGet("/actors", async (PlaceBookingContext db) =>
              await db.Actors.ToListAsync());
+
+            app.MapGet("/actor/{idActor}", async (int idActor, PlaceBookingContext db) =>
+                await db.Actors.FirstOrDefaultAsync(act => act.IdActor == idActor)
+                    is Actor actor ? Results.Ok(actor) : Results.NotFound());
 
             app.MapPost("/actor", async (Actor inputActor, PlaceBookingContext db) =>
             {
@@ -296,6 +298,11 @@ namespace API
 
             app.MapGet("/roles", async (PlaceBookingContext db) =>
              await db.Roles.ToListAsync());
+
+            app.MapGet("/role/{idFilm}", async (int idFilm, PlaceBookingContext db) =>
+            {
+                return await db.Roles.Where(role => role.IdFilm == idFilm).ToListAsync();
+            });
 
             app.MapPost("/role", async (Role inputRole, PlaceBookingContext db) =>
             {
@@ -366,6 +373,7 @@ namespace API
                 editFilm.Name = inputFilm.Name;
                 editFilm.AgeRating = inputFilm.AgeRating;
                 editFilm.Description = inputFilm.Description;
+                editFilm.IdImage = inputFilm.IdImage;
 
                 await db.SaveChangesAsync();
                 return Results.Ok(editFilm);
@@ -388,7 +396,7 @@ namespace API
              await db.Sessions.ToListAsync());
 
             app.MapGet("/sessions/{idCinema}", async (int idCinema, PlaceBookingContext db) =>
-            {              
+            {
                 return await (from film in db.Films
                               join session in db.Sessions on film.IdFilm equals session.IdFilm
                               join hall in db.Halls on session.IdHall equals hall.IdHall
@@ -396,10 +404,13 @@ namespace API
                               select new
                               {
                                   idSession = session.IdSession,
-                                  idHall = session.IdHall,
+                                  filmName = film.Name,
+                                  idCinema = hall.IdCinema,
+                                  idHall = hall.IdHall,
                                   hallNumber = hall.Number,
                                   hallType = hall.Type,
-                                  dateTime = session.DateTime
+                                  dateTime = session.DateTime,
+                                  idFilm = session.IdFilm,
                               }).ToListAsync();
             });
 
@@ -457,15 +468,15 @@ namespace API
 
             app.MapGet("/rows/{idHall}", async (int idHall, PlaceBookingContext db) =>
             {
-                return await (from place in db.Places 
-                              where place.IdHall == idHall 
-                              select place.Row ).Distinct().ToListAsync();
+                return await (from place in db.Places
+                              where place.IdHall == idHall
+                              select place.Row).Distinct().ToListAsync();
             }
             );
 
             app.MapGet("/seatNums/{idHall}/{rowNum}", async (int idHall, int rowNum, PlaceBookingContext db) =>
             {
-                return await (from place in db.Places 
+                return await (from place in db.Places
                               where place.IdHall == idHall && place.Row == rowNum
                               select new
                               {
@@ -528,7 +539,7 @@ namespace API
             app.MapGet("/reservedSeats/{idSession}/{idHall}", async (int idSession, int idHall, PlaceBookingContext db) =>
             {
                 return await (from booking in db.Bookings
-                              join place in db.Places on booking.IdPlace equals place.IdPlace                            
+                              join place in db.Places on booking.IdPlace equals place.IdPlace
                               where place.IdHall == idHall && booking.IdSession == idSession
                               select booking.IdPlace).ToListAsync();
             });
