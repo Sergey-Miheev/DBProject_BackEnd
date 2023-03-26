@@ -491,6 +491,40 @@ namespace API
             app.MapGet("/bookings", async (PlaceBookingContext db) =>
              await db.Bookings.ToListAsync());
 
+            app.MapGet("/bookings/{idAccount}", async (int idAccount, PlaceBookingContext db) =>
+            {
+                return await db.Bookings.Where(booking => booking.IdAccount == idAccount).ToListAsync();
+            });
+
+            app.MapGet("/booking/{idBooking}", async (int idBooking, PlaceBookingContext db) =>
+            await db.Bookings.FindAsync(idBooking)
+                    is Booking booking ? Results.Ok(booking) : Results.NotFound());
+
+            app.MapGet("/bookingsInfo/{idAccount}", async (int idAccount, PlaceBookingContext db) =>
+            {
+                return await (from hall in db.Halls
+                              join cinema in db.Cinemas on hall.IdCinema equals cinema.IdCinema
+                              join session in db.Sessions on hall.IdHall equals session.IdHall
+                              join booking in db.Bookings on session.IdSession equals booking.IdSession
+                              join place in db.Places on booking.IdPlace equals place.IdPlace
+                              join account in db.Accounts on booking.IdAccount equals account.IdAccount
+                              join film in db.Films on session.IdFilm equals film.IdFilm
+                              where account.IdAccount == idAccount
+                              select new
+                              {
+                                  idBooking = booking.IdBooking,
+                                  filmName = film.Name,
+                                  cinemaName = cinema.Name,
+                                  idHall = place.IdHall,
+                                  hallNumber = hall.Number,
+                                  row = place.Row,
+                                  seatNumber = place.SeatNumber,
+                                  hallType = hall.Type,
+                                  dateTime = session.DateTime,
+                                  code = booking.BookingCode
+                              }).ToListAsync();
+            });
+
             app.MapPost("/booking", async (Booking inputBooking, PlaceBookingContext db) =>
             {
                 Booking newBooking = new();
